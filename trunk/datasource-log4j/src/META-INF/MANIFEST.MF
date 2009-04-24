@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Created-By: 1.0 (Carlos Alonso González)
+Package: es.map.sgtic.fw.log4j
+Extension-Name: datasource-log4j
+Specification-Version: 1.0
+Specification-Vendor: MAP
+Specification-Title: DataSource Log4J
+Implementation-Version: 1.0
+Implementation-Vendor: MAP
+Implementation-Title: DataSource Log4J
+Implementation-Vendor-Id: es.map.sgtic
+X-Compile-Source-JDK: 1.5
+X-Compile-Target-JDK: 1.5
