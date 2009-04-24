@@ -19,7 +19,7 @@ Ejemplo de entrada apender en log4j.properties:
 {{{log4j.rootCategory=ERROR, DATASOURCE}}}
 
 {{{log4j.appender.DATASOURCE=es.map.sgtic.fw.log4j.DataSourceAppender}}}
-{{{log4j.appender.DATASOURCE.datasource=java:jdbc/datasource}}}
+{{{log4j.appender.DATASOURCE.datasource=link_datasource}}}
 {{{log4j.appender.DATASOURCE.sql=INSERT INTO TABLE_LOG (DE_NIVEL, DE_LOG, DE_EXCEPCION, FE_LOG) VALUES ('%p', '%m', '%e', TO_DATE('%d{yyyy-MM-dd HH:mm:ss}','YYYY-MM-DD HH24:MI:SS'))}}}
 {{{log4j.appender.DATASOURCE.bufferSize=1}}}
 {{{log4j.appender.DATABASE.layout=es.map.sgtic.fw.log4j.DataSourceLayout}}}
