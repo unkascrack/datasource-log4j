@@ -3,7 +3,7 @@ package es.map.sgtic.fw.log4j;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
-public class P6spyLayout extends PatternLayout {
+public class P6SpyLayout extends PatternLayout {
 
     private static final String SALTO_LINEA = System.getProperty("line.separator");
 
