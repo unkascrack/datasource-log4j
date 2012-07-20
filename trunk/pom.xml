@@ -83,7 +83,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>datasource-log4j</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
