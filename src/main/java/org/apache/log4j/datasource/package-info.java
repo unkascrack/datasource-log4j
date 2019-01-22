@@ -1,6 +1,6 @@
 /**
  * 
  * @author <a href="mailto:carlos.alonso.gonzalez@gmail.com">carlos.alonso.gonzalez@gmail.com</a>
- * @version 2.0 Fecha: 19/07/2012
+ * @version 1.1 Fecha: 22/01/2019
  */
-package es.map.sgtic.fw.log4j;
+package org.apache.log4j.datasource;

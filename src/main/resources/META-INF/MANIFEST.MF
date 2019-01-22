@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Created-By: 2.0 (Carlos Alonso González)
-Package: es.map.sgtic.fw.log4j
-Extension-Name: datasource-log4j
+Created-By: 1.1 (Carlos Alonso González)
+Package: org.apache.log4j.datasource
+Extension-Name: log4j-datasource
 Specification-Version: 2.0
 Specification-Vendor: MAP
 Specification-Title: DataSource Log4J

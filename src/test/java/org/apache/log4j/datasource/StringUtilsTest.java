@@ -1,4 +1,6 @@
-package es.map.sgtic.fw.log4j;
+package org.apache.log4j.datasource;
+
+import org.apache.log4j.datasource.StringUtils;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;

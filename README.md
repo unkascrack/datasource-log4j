@@ -1,9 +1,9 @@
-# datasource-log4j
+# log4j-datasource
 Permite escribir los logs a una base de datos, mediante la definición de un datasource.
 
 Cada llamada añade el log a un **ArrayList buffer**, cuando el buffer esta completo cada evento log es lanzado como una sentencia SQL (configurable) a la base de datos.
 
-El appender a invocar para utilizar esta librería debe ser *es.map.sgtic.fw.log4j.DataSourceAppender*
+El appender a invocar para utilizar esta librería debe ser *org.apache.log4j.datasource.DataSourceAppender*
 
 Parámetros definidos en la configuración del appender: 
  * **datasource**, [obligatorio] nombre del datasource. 
@@ -19,12 +19,23 @@ Ejemplo de entrada apender en log4j.properties:
 
     log4j.rootCategory=ERROR, DATASOURCE
 
-    log4j.appender.DATASOURCE=es.map.sgtic.fw.log4j.DataSourceAppender
+    log4j.appender.DATASOURCE=org.apache.log4j.datasource.DataSourceAppender
     log4j.appender.DATASOURCE.datasource=java:jdbc/datasource
     log4j.appender.DATASOURCE.sql=INSERT INTO TABLE_LOG (DE_NIVEL, DE_LOG, DE_EXCEPCION, FE_LOG) VALUES ('%p', '%m', '%e', TO_DATE('%d{yyyy-MM-dd HH:mm:ss}','YYYY-MM-DD HH24:MI:SS'))
     log4j.appender.DATASOURCE.bufferSize=1
-    log4j.appender.DATASOURCE.layout=es.map.sgtic.fw.log4j.DataSourceLayout
+    log4j.appender.DATASOURCE.layout=org.apache.log4j.datasource.DataSourceLayout
     log4j.appender.DATASOURCE.layout.maxSizeMessage=1000
     log4j.appender.DATASOURCE.layout.maxSizeException=4000
     log4j.appender.DATASOURCE.layout.maxTraceException=5
 
+
+Ejemplo de entrada apender en log4j.xml:
+
+	<appender name="DATABASE" class="org.apache.log4j.datasource.DataSourceAppender">
+		<param name="datasource" value="${jndi.dataSource}" />
+		<param name="threshold" value="WARN" />
+		<param name="sql" value="INSERT INTO GESFARMA_LOG (LOG_ID, NIVEL, HOSTNAME, MESSAGE, CLASSNAME, EXCEPTION, FECHA_LOG) VALUES (GESFARMA_LOG_SEQ.nextval, '%p', '${weblogic.Name}', '%m', '%c', '%e', SYSTIMESTAMP)" />
+		<param name="layout" value="org.apache.log4j.datasource.DataSourceLayout"/>
+		<param name="maxSizeMessage" value="4000" />
+		<param name="maxSizeException" value="4000" />
+	</appender>
