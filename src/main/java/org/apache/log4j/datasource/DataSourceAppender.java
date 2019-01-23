@@ -15,7 +15,6 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.PatternLayout;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -37,7 +36,6 @@ import org.apache.log4j.spi.LoggingEvent;
  * Par&aacute;metros definidos en la configuraci&oacute;n del appender:
  * <ul>
  * <li><code>datasource</code>, [<b>obligatorio</b>] nombre del datasource.</li>
- * <li><code>sql</code>, [<b>obligatorio</b>] consulta que lanzar contra la base de datos.</li>
  * <li><code>layout</code>, [<b>obligatorio</b>] Es necesario definir el layout, siendo posible utilizar cualquiera,
  * aunque es conveniente utilizar el propio layout del appender, <code>DataSourceLayout</code>, el cual dispone de
  * nuevos patrones <code>%e</code> y <code>%m</code>, para la gesti&oacute;n de excepciones.</li>
@@ -61,17 +59,14 @@ import org.apache.log4j.spi.LoggingEvent;
  * Ejemplo de entrada apender en log4j.properties: <br/>
  * <code>
  * <br/>
- * log4j.rootCategory=ERROR, DATASOURCE<br/>
+ * log4j.rootCategory=ERROR, DATABASE<br/>
  * <br/>
  * <b>
- * log4j.appender.DATASOURCE=org.apache.log4j.datasource.DataSourceAppender<br/>
- * log4j.appender.DATASOURCE.datasource=java:jdbc/datasource<br/>
- * log4j.appender.DATASOURCE.sql=INSERT INTO
- * TBT_LOG (DE_NIVEL, DE_LOG, DE_EXCEPCION, FE_LOG) VALUES
- * ('%p', '%m', '%e', TO_DATE('%d{yyyy-MM-dd
- * HH:mm:ss}','YYYY-MM-DD HH24:MI:SS'))<br/>
- * log4j.appender.DATASOURCE.bufferSize=1<br/>
+ * log4j.appender.DATABASE=org.apache.log4j.datasource.DataSourceAppender<br/>
+ * log4j.appender.DATABASE.datasource=java:jdbc/datasource<br/>
+ * log4j.appender.DATABASE.bufferSize=1<br/>
  * log4j.appender.DATABASE.layout=org.apache.log4j.datasource.DataSourceLayout<br/>
+ * log4j.appender.DATABASE.layout.sqlPattern=INSERT INTO LOG (DE_NIVEL, DE_LOG, DE_EXCEPCION, FE_LOG) VALUES ('%p', '%m', '%e', TO_DATE('%d{yyyy-MM-dd HH:mm:ss}','YYYY-MM-DD HH24:MI:SS'))<br/>
  * log4j.appender.DATABASE.layout.maxSizeMessage=1000<br/>
  * log4j.appender.DATABASE.layout.maxSizeException=4000<br/>
  * log4j.appender.DATABASE.layout.maxTraceException=5<br/>
@@ -80,7 +75,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * </p>
  *
  * @author <a href="mailto:carlos.alonso.gonzalez@gmail.com">carlos.alonso.gonzalez@gmail.com</a>
- * @version 1.1 Fecha: 22/01/2019
+ * @version 1.2.1 Fecha: 23/01/2019
  */
 public final class DataSourceAppender extends AppenderSkeleton {
 
@@ -88,13 +83,12 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 * Parametro que indica si el servicio de log para este apender esta activo o no, se activa en el momento de cargar
 	 * el contexto del datasource, si este ser realiza correcto su valor será "true", sino sigue a "false"
 	 */
-	private boolean activo = false;
+	private boolean active = false;
 
 	/**
 	 * Parametros de configuraci&oacute;n de log4j
 	 */
 	private String dataSource;
-	private String sqlStatement;
 	private int bufferSize = 1;
 
 	/**
@@ -107,7 +101,7 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 *
 	 */
 	public DataSourceAppender() {
-		super();
+		super(false);
 		buffer = new ArrayList(bufferSize);
 	}
 
@@ -127,37 +121,11 @@ public final class DataSourceAppender extends AppenderSkeleton {
 		try {
 			final InitialContext context = new InitialContext();
 			pool = (DataSource) context.lookup(this.dataSource);
-			activo = true;
+			active = true;
 		} catch (final NamingException e) {
 			LogLog.error("No se ha podido encontrar datasource, " + e.getExplanation(), e);
 		} catch (final Throwable e) {
 			LogLog.error("Datasource " + e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * @return the sqlStatement
-	 */
-	public String getSql() {
-		return sqlStatement;
-	}
-
-	/**
-	 * @param sql the sqlStatement to set
-	 */
-	public void setSql(final String sql) {
-		if (sql == null) {
-			LogLog.error("Falta el parámetro \"sql\" en el appender " + getClass().getName() + ".");
-			return;
-		}
-		sqlStatement = sql;
-
-		if (getLayout() == null) {
-			setLayout(new DataSourceLayout(sql));
-		} else if (getLayout().getClass().isAssignableFrom(DataSourceLayout.class)) {
-			((DataSourceLayout) getLayout()).setConversionPattern(sql);
-		} else {
-			((PatternLayout) getLayout()).setConversionPattern(sql);
 		}
 	}
 
@@ -176,6 +144,13 @@ public final class DataSourceAppender extends AppenderSkeleton {
 		buffer = new ArrayList(this.bufferSize);
 	}
 
+	/**
+	 * @return
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -191,7 +166,7 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 * @see org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
 	 */
 	public void append(final LoggingEvent logEvent) {
-		if (activo && sqlStatement != null) {
+		if (active) {
 			buffer.add(logEvent);
 
 			if (buffer.size() >= bufferSize) {
@@ -213,7 +188,7 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 *
 	 */
 	private void flushBuffer() {
-		if (activo && sqlStatement != null) {
+		if (active) {
 			Connection connection = null;
 			try {
 				connection = getConnection();

@@ -20,6 +20,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * <p>
  * Par&aacute;metros definidos para la configuraci&oacute;n del layout:
  * <ul>
+ * <li><code>sqlPattern</code>, [opcional] consulta que lanzar contra la base de datos.</li>
  * <li><code>maxSizeMessage</code>, [opcional] n&uacute;mero m&aacute;ximo de caracteres a mostrar en el mensaje, por
  * defecto muestra el mensaje completo.</li>
  * <li><code>maxSizeException</code>, [opcional] n&uacute;mero m&aacute;ximo de caracteres a mostrar en la
@@ -44,17 +45,14 @@ import org.apache.log4j.spi.LoggingEvent;
  * Ejemplo de entrada layout en log4j.properties: <br/>
  * <code>
  * <br/>
- * log4j.rootCategory=ERROR, DATASOURCE<br/>
+ * log4j.rootCategory=ERROR, DATABASE<br/>
  * <br/>
- * log4j.appender.DATASOURCE=org.apache.log4j.datasource.DataSourceAppender<br/>
- * log4j.appender.DATASOURCE.datasource=java:jdbc/datasource<br/>
- * log4j.appender.DATASOURCE.sql=INSERT INTO
- * TBT_LOG (DE_NIVEL, DE_LOG, DE_EXCEPCION, FE_LOG) VALUES
- * ('%p', '%m', '%e', TO_DATE('%d{yyyy-MM-dd
- * HH:mm:ss}','YYYY-MM-DD HH24:MI:SS'))<br/>
- * log4j.appender.DATASOURCE.bufferSize=1<br/>
+ * log4j.appender.DATABASE=org.apache.log4j.datasource.DataSourceAppender<br/>
+ * log4j.appender.DATABASE.datasource=java:jdbc/datasource<br/>
+ * log4j.appender.DATABASE.bufferSize=1<br/>
  * <b>
  * log4j.appender.DATABASE.layout=org.apache.log4j.datasource.DataSourceLayout<br/>
+ * log4j.appender.DATABASE.sqlPattern=INSERT INTO LOG (DE_NIVEL, DE_LOG, DE_EXCEPCION, FE_LOG) VALUES ('%p', '%m', '%e', TO_DATE('%d{yyyy-MM-dd HH:mm:ss}','YYYY-MM-DD HH24:MI:SS'))<br/>
  * log4j.appender.DATABASE.layout.maxSizeMessage=1000<br/>
  * log4j.appender.DATABASE.layout.maxSizeException=4000<br/>
  * log4j.appender.DATABASE.layout.maxTraceException=5<br/>
@@ -63,29 +61,25 @@ import org.apache.log4j.spi.LoggingEvent;
  * </p>
  *
  * @author <a href="mailto:carlos.alonso.gonzalez@gmail.com">carlos.alonso.gonzalez@gmail.com</a>
- * @version 1.1 Fecha: 22/01/2019
+ * @version 1.2.1 Fecha: 23/01/2019
  */
 public final class DataSourceLayout extends Layout {
 
 	/**
 	 *
 	 */
-	public final static String DEFAULT_CONVERSION_PATTERN = "%m %e";
+	public static final String DEFAULT_CONVERSION_PATTERN = "INSERT INTO LOG (LEVEL, CLASSNAME, MESSAGE, EXCEPTION, DATE_MESSAGE) VALUES ('%p', '%c', '%m', '%e', '%d{dd MMM yyyy HH:mm:ss,SSS}')";
 	public static final int DEFAULT_MAX_SIZE_EXCEPTION = -1;
 	public static final int DEFAULT_MAX_TRACE_EXCEPTION = -1;
 
 	/**
 	 *
 	 */
+	private String sqlPattern;
+	private PatternConverter head;
 	private int maxSizeMessage = DEFAULT_MAX_SIZE_EXCEPTION;
 	private int maxSizeException = DEFAULT_MAX_SIZE_EXCEPTION;
 	private int maxTraceException = DEFAULT_MAX_TRACE_EXCEPTION;
-
-	/**
-	 *
-	 */
-	private String pattern;
-	private PatternConverter head;
 
 	/**
 	 *
@@ -97,21 +91,13 @@ public final class DataSourceLayout extends Layout {
 	/**
 	 * @param pattern
 	 */
-	public DataSourceLayout(final String pattern) {
-		this.pattern = pattern;
-	}
-
-	/**
-	 * @param conversionPattern
-	 */
-	public void setConversionPattern(final String conversionPattern) {
-		pattern = conversionPattern;
-		head = createPatternParser().parse();
+	public DataSourceLayout(final String sqlPattern) {
+		this.sqlPattern = sqlPattern;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.log4j.Layout#format(org.apache.log4j.spi.LoggingEvent)
 	 */
 	public String format(final LoggingEvent event) {
@@ -133,12 +119,12 @@ public final class DataSourceLayout extends Layout {
 	 * @return
 	 */
 	private PatternParser createPatternParser() {
-		return new DataSourceParser(pattern, maxSizeMessage, maxSizeException, maxTraceException);
+		return new DataSourceParser(sqlPattern, maxSizeMessage, maxSizeException, maxTraceException);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.log4j.Layout#ignoresThrowable()
 	 */
 	public boolean ignoresThrowable() {
@@ -147,11 +133,25 @@ public final class DataSourceLayout extends Layout {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.log4j.spi.OptionHandler#activateOptions()
 	 */
 	public void activateOptions() {
 
+	}
+
+	/**
+	 * @return the sqlPattern
+	 */
+	public String getSqlPattern() {
+		return sqlPattern;
+	}
+
+	/**
+	 * @param sqlPattern the sqlPattern to set
+	 */
+	public void setSqlPattern(final String sqlPattern) {
+		this.sqlPattern = sqlPattern;
 	}
 
 	/**
@@ -194,12 +194,5 @@ public final class DataSourceLayout extends Layout {
 	 */
 	public void setMaxTraceException(final int maxTraceException) {
 		this.maxTraceException = maxTraceException > 0 ? maxTraceException : DEFAULT_MAX_TRACE_EXCEPTION;
-	}
-
-	/**
-	 * @return the pattern
-	 */
-	public String getPattern() {
-		return pattern;
 	}
 }

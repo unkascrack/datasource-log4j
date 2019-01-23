@@ -31,11 +31,19 @@ Ejemplo de entrada apender en log4j.properties:
 
 Ejemplo de entrada apender en log4j.xml:
 
-	<appender name="DATABASE" class="org.apache.log4j.datasource.DataSourceAppender">
-		<param name="datasource" value="${jndi.dataSource}" />
-		<param name="threshold" value="WARN" />
-		<param name="sql" value="INSERT INTO GESFARMA_LOG (LOG_ID, NIVEL, HOSTNAME, MESSAGE, CLASSNAME, EXCEPTION, FECHA_LOG) VALUES (GESFARMA_LOG_SEQ.nextval, '%p', '${weblogic.Name}', '%m', '%c', '%e', SYSTIMESTAMP)" />
-		<param name="layout" value="org.apache.log4j.datasource.DataSourceLayout"/>
-		<param name="maxSizeMessage" value="4000" />
-		<param name="maxSizeException" value="4000" />
-	</appender>
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+    <log4j:configuration debug="false">
+        <appender name="DATABASE" class="org.apache.log4j.datasource.DataSourceAppender">
+            <param name="datasource" value="jdbc/datasource" />
+            <!-- <param name="threshold" value="WARN" /> -->
+            <layout class="org.apache.log4j.datasource.DataSourceLayout">
+                <param name="sqlPattern" value="INSERT INTO LOG (ID, LEVEL, CLASSNAME, MESSAGE, EXCEPTION, DATE_MESSAGE) VALUES (SEQ_LOG.nextval, '%p', '%c', '%m', '%e', SYSTIMESTAMP)" />
+                <param name="maxSizeMessage" value="4000" />
+                <param name="maxSizeException" value="4000" />
+            </layout>
+        </appender>
+        <root>
+            <appender-ref ref="DATABASE" />
+        </root>
+   </log4j:configuration>
