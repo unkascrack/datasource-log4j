@@ -101,7 +101,7 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 *
 	 */
 	public DataSourceAppender() {
-		super(false);
+		super();
 		buffer = new ArrayList(bufferSize);
 	}
 
