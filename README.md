@@ -55,4 +55,4 @@ Ejemplo de entrada apender en log4j.xml:
         <root>
             <appender-ref ref="DATABASE" />
         </root>
-   </log4j:configuration>
+    </log4j:configuration>
