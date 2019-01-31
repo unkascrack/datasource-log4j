@@ -1,4 +1,4 @@
-package org.apache.log4j.datasource;
+package org.apache.log4j.jndi.datasource;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -7,6 +7,8 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.jndi.datasource.DataSourceAppender;
+import org.apache.log4j.jndi.datasource.DataSourceLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.Assert;
 

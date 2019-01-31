@@ -1,6 +1,6 @@
-package org.apache.log4j.datasource;
+package org.apache.log4j.jndi.datasource;
 
-import org.apache.log4j.datasource.StringUtils;
+import org.apache.log4j.jndi.datasource.StringUtils;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;

@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.apache.log4j.datasource;
+package org.apache.log4j.jndi.datasource;
 
 import org.apache.log4j.helpers.PatternConverter;
 import org.apache.log4j.helpers.PatternParser;
@@ -12,7 +12,7 @@ import org.apache.log4j.helpers.PatternParser;
  * @author <a href="mailto:carlos.alonso.gonzalez@gmail.com">carlos.alonso.gonzalez@gmail.com</a>
  * @version 1.2.1 Fecha: 23/01/2019
  */
-public final class DataSourceParser extends PatternParser {
+final class DataSourceParser extends PatternParser {
 
 	/**
 	 *
@@ -51,6 +51,10 @@ public final class DataSourceParser extends PatternParser {
 			break;
 		case 'm':
 			pc = new MessagePatternConverter(formattingInfo, maxSizeMessage);
+			addConverter(pc);
+			break;
+		case 'h':
+			pc = new HostNamePatternConverter();
 			addConverter(pc);
 			break;
 		default:

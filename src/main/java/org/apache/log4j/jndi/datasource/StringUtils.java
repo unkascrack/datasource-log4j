@@ -1,4 +1,4 @@
-package org.apache.log4j.datasource;
+package org.apache.log4j.jndi.datasource;
 
 /**
  *

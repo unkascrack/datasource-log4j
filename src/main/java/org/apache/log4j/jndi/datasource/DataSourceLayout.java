@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.apache.log4j.datasource;
+package org.apache.log4j.jndi.datasource;
 
 import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.PatternConverter;

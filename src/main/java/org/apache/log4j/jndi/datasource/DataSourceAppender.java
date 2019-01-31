@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.apache.log4j.datasource;
+package org.apache.log4j.jndi.datasource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
