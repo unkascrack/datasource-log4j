@@ -1,29 +1,31 @@
 package org.apache.log4j.jndi.datasource;
 
-import org.apache.log4j.jndi.datasource.StringUtils;
+import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+public class StringUtilsTest {
 
-public class StringUtilsTest extends TestCase {
+	@Test
+	public void substring_whenValueIsNull_shouldReturnNull() {
+		final String result = StringUtils.substring(null, 0, 0);
+		Assert.assertNull(result);
+	}
 
-    public void testSubstringNull() {
-        final String result = StringUtils.substring(null, 0, 0);
-        Assert.assertNull(result);
-    }
+	@Test
+	public void substring_whenValueIsEmpty_shouldReturnEmpty() {
+		final String result = StringUtils.substring("", 0, 0);
+		Assert.assertEquals("", result);
+	}
 
-    public void testSubstringEmpty() {
-        final String result = StringUtils.substring("", 0, 0);
-        Assert.assertEquals("", result);
-    }
+	@Test
+	public void substring_whenSizeIsIncorrect_shouldReturnEmpty() {
+		final String result = StringUtils.substring("123456", 6, 10);
+		Assert.assertEquals("", result);
+	}
 
-    public void testSubstringIncorrectSizeSubstract() {
-        final String result = StringUtils.substring("123456", 6, 10);
-        Assert.assertEquals("", result);
-    }
-
-    public void testSubstringCorrectSizeSubstrac() {
-        final String result = StringUtils.substring("123456", 5, 6);
-        Assert.assertEquals("6", result);
-    }
+	@Test
+	public void substring_whenSizeIsValid_shouldReturnData() {
+		final String result = StringUtils.substring("123456", 5, 6);
+		Assert.assertEquals("6", result);
+	}
 }

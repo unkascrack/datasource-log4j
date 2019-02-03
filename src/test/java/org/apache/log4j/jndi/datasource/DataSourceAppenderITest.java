@@ -7,21 +7,20 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.jndi.datasource.DataSourceAppender;
-import org.apache.log4j.jndi.datasource.DataSourceLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class DataSourceAppenderITest extends TestCase {
+@SuppressWarnings("static-access")
+public class DataSourceAppenderITest {
 
 	private static final String APPENDER_NAME = "DATABASE";
-	private static final String DEFAULT_SQL_PATTERN = "INSERT INTO LOG (ID, LEVEL, CLASSNAME, MESSAGE, EXCEPTION, DATE_MESSAGE) VALUES (SEQ_LOG.nextval, '%p', '%c', '%m', '%e', SYSTIMESTAMP)";
+	private static final String DEFAULT_SQL_PATTERN = "INSERT INTO LOG (LEVEL, HOSTNAME, MESSAGE, EXCEPTION, DATE_LOG) VALUES ('%p', '%h', '%m', '%e', '%d{yyyy-MM-dd HH:mm:ss}')";
 	private static final int DEFAULT_MAX_SIZE_MESSAGE = 4000;
 	private static final int DEFAULT_MAX_SIZE_EXCEPTION = 4000;
 
-	public void test_loadConfigurationFromProgramatic() {
+	@Test
+	public void loadConfigurationFromProgramatic() {
 		final DataSourceLayout layout = new DataSourceLayout();
 		layout.setSqlPattern(DEFAULT_SQL_PATTERN);
 		layout.setMaxSizeMessage(DEFAULT_MAX_SIZE_MESSAGE);
@@ -34,12 +33,14 @@ public class DataSourceAppenderITest extends TestCase {
 		validateLogger(logger);
 	}
 
-	public void test_loadConfigurationFromXmlFile() {
+	@Test
+	public void loadConfigurationFromXmlFile() {
 		DOMConfigurator.configure(getClass().getResource("/logger/log4j.xml"));
 		validateLogger(Logger.getLogger(DataSourceAppenderITest.class));
 	}
 
-	public void test_loadConfigurationFromPropertyFile() throws IOException {
+	@Test
+	public void loadConfigurationFromPropertyFile() throws IOException {
 		final Properties props = new Properties();
 		props.load(getClass().getResourceAsStream("/logger/log4j.properties"));
 		PropertyConfigurator.configure(props);

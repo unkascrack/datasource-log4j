@@ -1,13 +1,14 @@
 package org.apache.log4j.jndi.datasource;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class HostNamePatternConverterTest extends TestCase {
+public class HostNamePatternConverterTest {
 
 	private final HostNamePatternConverter converter = new HostNamePatternConverter();
 
-	public void test_convert_shouldReturnData() {
+	@Test
+	public void convert_shouldReturnData() {
 		final String result = converter.convert(null);
 		Assert.assertNotNull(result);
 	}

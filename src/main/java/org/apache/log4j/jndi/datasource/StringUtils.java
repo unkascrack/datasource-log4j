@@ -2,9 +2,6 @@ package org.apache.log4j.jndi.datasource;
 
 /**
  *
- *
- * @author <a href="mailto:carlos.alonso.gonzalez@gmail.com">carlos.alonso.gonzalez@gmail.com</a>
- * @version 1.2.1 Fecha: 23/01/2019
  */
 final class StringUtils {
 
@@ -12,7 +9,7 @@ final class StringUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	static final String EMPTY = "";
 

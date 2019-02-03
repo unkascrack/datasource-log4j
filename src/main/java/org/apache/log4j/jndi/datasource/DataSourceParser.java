@@ -8,9 +8,6 @@ import org.apache.log4j.helpers.PatternParser;
 
 /**
  *
- *
- * @author <a href="mailto:carlos.alonso.gonzalez@gmail.com">carlos.alonso.gonzalez@gmail.com</a>
- * @version 1.2.1 Fecha: 23/01/2019
  */
 final class DataSourceParser extends PatternParser {
 
@@ -27,10 +24,8 @@ final class DataSourceParser extends PatternParser {
 	 * @param maxSizeException
 	 * @param maxTraceException
 	 */
-	public DataSourceParser(final String pattern,
-							final int maxSizeMessage,
-							final int maxSizeException,
-							final int maxTraceException) {
+	public DataSourceParser(final String pattern, final int maxSizeMessage, final int maxSizeException,
+			final int maxTraceException) {
 		super(pattern);
 		this.maxSizeMessage = maxSizeMessage;
 		this.maxSizeException = maxSizeException;
@@ -42,6 +37,7 @@ final class DataSourceParser extends PatternParser {
 	 *
 	 * @see org.apache.log4j.helpers.PatternParser#finalizeConverter(char)
 	 */
+	@Override
 	protected void finalizeConverter(final char c) {
 		PatternConverter pc = null;
 		switch (c) {

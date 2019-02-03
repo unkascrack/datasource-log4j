@@ -6,9 +6,6 @@ import org.apache.log4j.spi.LoggingEvent;
 
 /**
  *
- *
- * @author <a href="mailto:carlos.alonso.gonzalez@gmail.com">carlos.alonso.gonzalez@gmail.com</a>
- * @version 1.2.1 Fecha: 23/01/2019
  */
 final class MessagePatternConverter extends PatternConverter {
 
@@ -26,8 +23,10 @@ final class MessagePatternConverter extends PatternConverter {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.apache.log4j.helpers.PatternConverter#convert(org.apache.log4j.spi.LoggingEvent)
+	 * @see org.apache.log4j.helpers.PatternConverter#convert(org.apache.log4j.spi.
+	 * LoggingEvent)
 	 */
+	@Override
 	protected String convert(final LoggingEvent event) {
 		String message = event.getRenderedMessage();
 		if (maxSizeMessage != DataSourceLayout.DEFAULT_MAX_SIZE_EXCEPTION) {
