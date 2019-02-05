@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.AppenderSkeleton;
@@ -18,13 +17,12 @@ import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * DataSourceAppender permite escribir los logs a una base de datos, mediante la
- * definici&oacute;n de un <code>datasource</code>.
+ * DataSourceAppender permite escribir los logs a una base de datos, mediante la definici&oacute;n de un
+ * <code>datasource</code>.
  *
  * <p>
- * Cada llamada a&ntilde;ade el log a un <code>ArrayList</code> buffer. Cuando
- * el buffer esta completo cada evento log es lanzado como una sentencia SQL
- * (configurable) a la base de datos
+ * Cada llamada a&ntilde;ade el log a un <code>ArrayList</code> buffer. Cuando el buffer esta completo cada evento log
+ * es lanzado como una sentencia SQL (configurable) a la base de datos
  * </p>
  *
  * <p>
@@ -36,26 +34,22 @@ import org.apache.log4j.spi.LoggingEvent;
  * Par&aacute;metros definidos en la configuraci&oacute;n del appender:
  * <ul>
  * <li><code>datasource</code>, [<b>obligatorio</b>] nombre del datasource.</li>
- * <li><code>layout</code>, [<b>obligatorio</b>] Es necesario definir el layout,
- * siendo posible utilizar cualquiera, aunque es conveniente utilizar el propio
- * layout del appender, <code>DataSourceLayout</code>, el cual dispone de nuevos
- * patrones <code>%e</code> y <code>%m</code>, para la gesti&oacute;n de
- * excepciones.</li>
- * <li><code>bufferSize</code>, [opcional] n&uacute;mero de logs que debe
- * haberse producido para guardarlos en la base de datos, por defecto es 1
- * (inmediato).</li>
+ * <li><code>layout</code>, [<b>obligatorio</b>] Es necesario definir el layout, siendo posible utilizar cualquiera,
+ * aunque es conveniente utilizar el propio layout del appender, <code>DataSourceLayout</code>, el cual dispone de
+ * nuevos patrones <code>%e</code> y <code>%m</code>, para la gesti&oacute;n de excepciones.</li>
+ * <li><code>bufferSize</code>, [opcional] n&uacute;mero de logs que debe haberse producido para guardarlos en la base
+ * de datos, por defecto es 1 (inmediato).</li>
  * </ul>
  * </p>
  *
  * <p>
- * Si durante la carga del datasource, se produce un error, se muestra un
- * mensaje por la consola y el appender deja de funcionar.
+ * Si durante la carga del datasource, se produce un error, se muestra un mensaje por la consola y el appender deja de
+ * funcionar.
  * </p>
  *
  * <p>
- * Si al realizar una insercci&oacute;n en la base de datos se produce un error,
- * muestra la descripci&oacute;n del error por la consola, pero continua con la
- * inserci&oacute;n del resto de logs.
+ * Si al realizar una insercci&oacute;n en la base de datos se produce un error, muestra la descripci&oacute;n del error
+ * por la consola, pero continua con la inserci&oacute;n del resto de logs.
  * </p>
  *
  *
@@ -67,7 +61,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * <br/>
  * <b>
  * log4j.appender.DATABASE=org.apache.log4j.jndi.datasource.DataSourceAppender<br/>
- * log4j.appender.DATABASE.datasource=java:jdbc/datasource<br/>
+ * log4j.appender.DATABASE.jndi=java:jdbc/datasource<br/>
  * log4j.appender.DATABASE.bufferSize=1<br/>
  * log4j.appender.DATABASE.layout=org.apache.log4j.jndi.datasource.DataSourceLayout<br/>
  * log4j.appender.DATABASE.layout.sqlPattern=INSERT INTO LOG (LEVEL, HOSTNAME, MESSAGE, EXCEPTION, DATE_LOG) VALUES ('%p', '%h', '%m', '%e', '%d{yyyy-MM-dd HH:mm:ss}')<br/>
@@ -85,7 +79,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * &lt;!DOCTYPE log4j:configuration SYSTEM &quot;log4j.dtd&quot;&gt;<br/>
  * &lt;log4j:configuration debug=&quot;false&quot;&gt;<br/>
  * &lt;appender name=&quot;DATABASE&quot; class=&quot;org.apache.log4j.jndi.datasource.DataSourceAppender&quot;&gt;<br/>
- * &lt;param name=&quot;datasource&quot; value=&quot;jdbc/datasource&quot; /&gt;<br/>
+ * &lt;param name=&quot;jndi&quot; value=&quot;jdbc/datasource&quot; /&gt;<br/>
  * &lt;layout class=&quot;org.apache.log4j.jndi.datasource.DataSourceLayout&quot;&gt;<br/>
  * &lt;param name=&quot;sqlPattern&quot; value=&quot;INSERT INTO LOG (LEVEL, HOSTNAME, MESSAGE, EXCEPTION, DATE_LOG) VALUES ('%p', '%h', '%m', '%e', '%d{yyyy-MM-dd HH:mm:ss}')&quot; /&gt;<br/>
  * &lt;param name=&quot;maxSizeMessage&quot; value=&quot;4000&quot; /&gt;<br/>
@@ -102,22 +96,15 @@ import org.apache.log4j.spi.LoggingEvent;
 public final class DataSourceAppender extends AppenderSkeleton {
 
 	/**
-	 * Parametro que indica si el servicio de log para este apender esta activo o
-	 * no, se activa en el momento de cargar el contexto del datasource, si este ser
-	 * realiza correcto su valor será "true", sino sigue a "false"
-	 */
-	private boolean active = false;
-
-	/**
 	 * Parametros de configuraci&oacute;n de log4j
 	 */
-	private String dataSource;
+	private String jndi;
 	private int bufferSize = 1;
 
 	/**
 	 *
 	 */
-	private DataSource pool;
+	private DataSource dataSouce;
 	private List<LoggingEvent> buffer;
 
 	/**
@@ -131,24 +118,23 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	/**
 	 * @return the dataSource
 	 */
-	public String getDatasource() {
-		return dataSource;
+	public String getJndi() {
+		return jndi;
 	}
 
 	/**
-	 * @param dataSource the dataSource to set
+	 * @param jndi the jndi name to set
 	 */
-	public void setDatasource(final String dataSource) {
-		this.dataSource = dataSource;
-
+	public void setJndi(final String jndi) {
+		this.jndi = jndi;
 		try {
 			final InitialContext context = new InitialContext();
-			pool = (DataSource) context.lookup(this.dataSource);
-			active = true;
-		} catch (final NamingException e) {
-			LogLog.error("No se ha podido encontrar datasource, " + e.getExplanation(), e);
+			dataSouce = (DataSource) context.lookup(this.jndi);
+			if (dataSouce == null) {
+				LogLog.error("No se ha podido recuperar JNDI Mail Session: '" + this.jndi + "'");
+			}
 		} catch (final Throwable e) {
-			LogLog.error("Datasource " + e.getMessage(), e);
+			LogLog.error("Error obtener JNDI DataSource: " + e.getMessage(), e);
 		}
 	}
 
@@ -171,7 +157,7 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 * @return
 	 */
 	public boolean isActive() {
-		return active;
+		return dataSouce != null;
 	}
 
 	/*
@@ -186,12 +172,11 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
+	 * @see org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
 	 */
 	@Override
 	public void append(final LoggingEvent logEvent) {
-		if (active) {
+		if (isActive()) {
 			buffer.add(logEvent);
 
 			if (buffer.size() >= bufferSize) {
@@ -213,7 +198,7 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 *
 	 */
 	private void flushBuffer() {
-		if (active) {
+		if (isActive()) {
 			Connection connection = null;
 			try {
 				connection = getConnection();
@@ -236,7 +221,9 @@ public final class DataSourceAppender extends AppenderSkeleton {
 		}
 	}
 
-	private void update(final Connection connection, final String sql) throws SQLException {
+	private void update(final Connection connection,
+						final String sql)
+			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			stmt = connection.prepareStatement(sql);
@@ -265,7 +252,7 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 * @throws SQLException
 	 */
 	private Connection getConnection() throws SQLException {
-		final Connection connection = pool.getConnection();
+		final Connection connection = dataSouce.getConnection();
 		connection.setAutoCommit(true);
 		return connection;
 	}

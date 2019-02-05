@@ -6,7 +6,7 @@ Cada llamada añade el log a un **ArrayList buffer**, cuando el buffer esta comp
 El appender a invocar para utilizar esta librería debe ser *org.apache.log4j.jndi.datasource.DataSourceAppender*
 
 Parámetros definidos en la configuración del appender: 
- * **datasource** [obligatorio], nombre del datasource. 
+ * **jndi** [obligatorio], nombre del datasource. 
  * **layout** [obligatorio], layout del appender, siendo posible utilizar cualquiera, aunque es conveniente utilizar el propio layout del appender, DataSourceLayout, el cual dispone de nuevos patrones %e y %m, para la gestión de excepciones. 
  * *bufferSize* [opcional], número de logs que debe haberse producido para guardarlos en la base de datos, por defecto es 1 (inmediato).
 
@@ -30,7 +30,7 @@ Ejemplo de entrada apender en log4j.properties:
     log4j.rootCategory=ERROR, DATABASE
 
     log4j.appender.DATABASE=org.apache.log4j.jndi.datasource.DataSourceAppender
-    log4j.appender.DATABASE.datasource=java:jdbc/datasource
+    log4j.appender.DATABASE.jndi=java:jdbc/datasource
     log4j.appender.DATABASE.bufferSize=1
     log4j.appender.DATABASE.layout=org.apache.log4j.jndi.datasource.DataSourceLayout
     log4j.appender.DATABASE.layout.sqlPattern=INSERT INTO LOG (LEVEL, HOSTNAME, MESSAGE, EXCEPTION, DATE_LOG) VALUES ('%p', '%h', '%m', '%e', '%d{yyyy-MM-dd HH:mm:ss}')
@@ -45,7 +45,7 @@ Ejemplo de entrada apender en log4j.xml:
     <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
     <log4j:configuration debug="false">
         <appender name="DATABASE" class="org.apache.log4j.jndi.datasource.DataSourceAppender">
-            <param name="datasource" value="jdbc/datasource" />
+            <param name="jndi" value="jdbc/datasource" />
             <!-- <param name="threshold" value="WARN" /> -->
             <layout class="org.apache.log4j.jndi.datasource.DataSourceLayout">
                 <param name="sqlPattern" value="INSERT INTO LOG (LEVEL, HOSTNAME, MESSAGE, EXCEPTION, DATE_LOG) VALUES ('%p', '%h', '%m', '%e', '%d{yyyy-MM-dd HH:mm:ss}')" />

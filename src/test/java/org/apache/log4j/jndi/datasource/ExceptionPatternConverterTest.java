@@ -14,21 +14,21 @@ public class ExceptionPatternConverterTest {
 	public void convert_whenLogEventIsNull_shouldReturnEmptyString() {
 		final String result = converter.convert(null);
 		Assert.assertNotNull(result);
-		Assert.assertTrue(result.isEmpty());
+		Assert.assertTrue(result.length() == 0);
 	}
 
 	@Test
 	public void convert_whenLogEventIsNoException_shouldReturnEmptyString() {
 		final String result = converter.convert(createLoggingEvent(null));
 		Assert.assertNotNull(result);
-		Assert.assertTrue(result.isEmpty());
+		Assert.assertTrue(result.length() == 0);
 	}
 
 	@Test
 	public void convert_whenLogEventIsNoException_shouldReturnNotEmptyString() {
 		final String result = converter.convert(createLoggingEvent(new RuntimeException("error")));
 		Assert.assertNotNull(result);
-		Assert.assertFalse(result.isEmpty());
+		Assert.assertFalse(result.length() == 0);
 	}
 
 	@SuppressWarnings("deprecation")

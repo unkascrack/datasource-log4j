@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log4j</groupId>
 	<artifactId>log4j-jndi-datasource</artifactId>
-	<version>1.3.0</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>Log4j Appender JNDI Datasource</name>
 	<issueManagement>
@@ -41,6 +41,7 @@
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
 		<powermock.version>1.6.4</powermock.version>
+		<simple-jndi.version>0.11.4.1</simple-jndi.version>
 	</properties>
 	<dependencies>
 		<dependency>

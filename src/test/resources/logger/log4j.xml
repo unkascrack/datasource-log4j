@@ -3,7 +3,7 @@
 <log4j:configuration debug="false">
 
 	<appender name="DATABASE" class="org.apache.log4j.jndi.datasource.DataSourceAppender">
-		<param name="datasource" value="jdbc/datasource" />
+		<param name="jndi" value="jdbc/datasource" />
 		<!-- <param name="threshold" value="WARN" /> -->
 		<layout class="org.apache.log4j.jndi.datasource.DataSourceLayout">
 			<param name="sqlPattern" value="INSERT INTO LOG (LEVEL, HOSTNAME, MESSAGE, EXCEPTION, DATE_LOG) VALUES ('%p', '%h', '%m', '%e', '%d{yyyy-MM-dd HH:mm:ss}')" />
