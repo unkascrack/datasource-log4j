@@ -111,7 +111,7 @@ public final class DataSourceLayout extends Layout {
 	 * @param pattern
 	 */
 	public DataSourceLayout(final String sqlPattern) {
-		this.sqlPattern = sqlPattern;
+		setSqlPattern(sqlPattern);
 	}
 
 	/*
@@ -172,7 +172,9 @@ public final class DataSourceLayout extends Layout {
 	 * @param sqlPattern the sqlPattern to set
 	 */
 	public void setSqlPattern(final String sqlPattern) {
-		this.sqlPattern = sqlPattern;
+		if (sqlPattern != null) {
+			this.sqlPattern = sqlPattern.trim();
+		}
 	}
 
 	/**

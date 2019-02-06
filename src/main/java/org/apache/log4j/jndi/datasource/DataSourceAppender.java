@@ -126,7 +126,11 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 * @param jndi the jndi name to set
 	 */
 	public void setJndi(final String jndi) {
-		this.jndi = jndi;
+		if (jndi == null || jndi.trim().length() == 0) {
+			LogLog.error("No se ha podido recuperar JNDI DataSource: '" + jndi + "'");
+			return;
+		}
+		this.jndi = jndi.trim();
 		try {
 			final InitialContext context = new InitialContext();
 			dataSouce = (DataSource) context.lookup(this.jndi);
