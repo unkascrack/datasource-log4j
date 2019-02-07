@@ -3,17 +3,10 @@
  */
 package org.apache.log4j.jndi.datasource;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
-
 import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
@@ -95,6 +88,8 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public final class DataSourceAppender extends AppenderSkeleton {
 
+	private final DataSourceWriter writer = new DataSourceWriter();
+
 	/**
 	 * Parametros de configuraci&oacute;n de log4j
 	 */
@@ -104,7 +99,6 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	/**
 	 *
 	 */
-	private DataSource dataSouce;
 	private List<LoggingEvent> buffer;
 
 	/**
@@ -126,20 +120,8 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 * @param jndi the jndi name to set
 	 */
 	public void setJndi(final String jndi) {
-		if (jndi == null || jndi.trim().length() == 0) {
-			LogLog.error("No se ha podido recuperar JNDI DataSource: '" + jndi + "'");
-			return;
-		}
-		this.jndi = jndi.trim();
-		try {
-			final InitialContext context = new InitialContext();
-			dataSouce = (DataSource) context.lookup(this.jndi);
-			if (dataSouce == null) {
-				LogLog.error("No se ha podido recuperar JNDI Mail Session: '" + this.jndi + "'");
-			}
-		} catch (final Throwable e) {
-			LogLog.error("Error obtener JNDI DataSource: " + e.getMessage(), e);
-		}
+		this.jndi = jndi;
+		writer.load(jndi);
 	}
 
 	/**
@@ -157,17 +139,10 @@ public final class DataSourceAppender extends AppenderSkeleton {
 		buffer = new ArrayList<LoggingEvent>(this.bufferSize);
 	}
 
-	/**
-	 * @return
-	 */
-	public boolean isActive() {
-		return dataSouce != null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.apache.log4j.AppenderSkeleton#requiresLayout()
+	 * @see org.apache.log4j.AppenderSkeleton#requiresLayout() w
 	 */
 	public boolean requiresLayout() {
 		return true;
@@ -180,12 +155,9 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 */
 	@Override
 	public void append(final LoggingEvent logEvent) {
-		if (isActive()) {
-			buffer.add(logEvent);
-
-			if (buffer.size() >= bufferSize) {
-				flushBuffer();
-			}
+		buffer.add(logEvent);
+		if (buffer.size() >= bufferSize) {
+			flushBuffer();
 		}
 	}
 
@@ -202,62 +174,13 @@ public final class DataSourceAppender extends AppenderSkeleton {
 	 *
 	 */
 	private void flushBuffer() {
-		if (isActive()) {
-			Connection connection = null;
-			try {
-				connection = getConnection();
-				for (final LoggingEvent logEvent : buffer) {
-					final String sql = getLayout().format(logEvent);
-					try {
-						update(connection, sql);
-					} catch (final SQLException e) {
-						LogLog.error("Guardando LOG database, " + e.getMessage(), e);
-					}
-				}
-			} catch (final SQLException e) {
-				LogLog.error("Obteniendo conexion del datasource, " + e.getMessage(), e);
-			} catch (final Throwable e) {
-				LogLog.error(e.toString(), e);
-			} finally {
-				closeQuietly(connection);
-				buffer.clear();
-			}
-		}
-	}
-
-	private void update(final Connection connection,
-						final String sql)
-			throws SQLException {
-		PreparedStatement stmt = null;
 		try {
-			stmt = connection.prepareStatement(sql);
-			stmt.executeUpdate();
+			for (final LoggingEvent logEvent : buffer) {
+				final String sql = getLayout().format(logEvent);
+				writer.write(sql);
+			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			buffer.clear();
 		}
-	}
-
-	/**
-	 * @param connection
-	 */
-	private void closeQuietly(final Connection connection) {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (final SQLException e) {
-		}
-	}
-
-	/**
-	 * @return
-	 * @throws SQLException
-	 */
-	private Connection getConnection() throws SQLException {
-		final Connection connection = dataSouce.getConnection();
-		connection.setAutoCommit(true);
-		return connection;
 	}
 }
